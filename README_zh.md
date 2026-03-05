@@ -42,18 +42,20 @@ resp, err := client.Search(ctx, &tavily.SearchParams{
 
 ## 国家筛选
 
-使用 ISO 3166-1 alpha-2 国家代码来提升特定国家的搜索结果权重。国家筛选仅在 `topic` 为 `general`（或未设置）时可用。
+使用 ISO 3166-1 alpha-2 国家代码来提升特定国家的搜索结果权重。国家筛选仅在 `topic` 为 `general`（或未设置）时可用。国家代码不区分大小写。
 
 ```go
 resp, err := client.Search(ctx, &tavily.SearchParams{
     Query:   "latest tech news",
-    Country: new(tavily.CountryUS),
+    Country: "US",
 })
 ```
 
-这个设计是为 LLM 工具调用场景考虑的：当你把搜索能力作为工具暴露给 LLM 时，工具的 schema 只需要声明"ISO 3166-1 alpha-2 国家代码"即可，无需枚举 160 多个国家名称字符串，因为 LLM 天然了解 ISO 标准。
-
-> **注意：** Tavily 支持约 160 个国家，是完整 ISO 3166-1 alpha-2 标准（249 个代码）的子集。不支持的代码会在调用时被拒绝。
+> **注意：** Tavily 支持约 160 个国家。不支持的国家代码会在调用时被拒绝。  
+> 国家代码映射文件：[`country.go`](./country.go)。  
+> 示例代码：`US`/`us`、`CN`/`cn`、`JP`/`jp`。  
+> SDK 对国家代码大小写不敏感。  
+> 当前 SDK 映射基于 **2026-03-05** 实现。
 
 ## 内容提取
 

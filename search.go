@@ -10,9 +10,9 @@ import (
 type SearchDepth string
 
 const (
-	SearchDepthBasic    SearchDepth = "basic"
-	SearchDepthAdvanced SearchDepth = "advanced"
-	SearchDepthFast     SearchDepth = "fast"
+	SearchDepthBasic     SearchDepth = "basic"
+	SearchDepthAdvanced  SearchDepth = "advanced"
+	SearchDepthFast      SearchDepth = "fast"
 	SearchDepthUltraFast SearchDepth = "ultra-fast"
 )
 
@@ -54,23 +54,23 @@ const (
 // SearchParams is the request body for POST /search.
 // Zero-value fields are omitted; the API uses server-side defaults.
 type SearchParams struct {
-	Query                    string             `json:"query"`
-	SearchDepth              SearchDepth        `json:"search_depth,omitzero"`
-	Topic                    Topic              `json:"topic,omitzero"`
-	TimeRange                TimeRange          `json:"time_range,omitzero"`
-	StartDate                string             `json:"start_date,omitzero"`
-	EndDate                  string             `json:"end_date,omitzero"`
-	MaxResults               uint64             `json:"max_results,omitzero"`
-	ChunksPerSource          uint64             `json:"chunks_per_source,omitzero"`
-	IncludeDomains           []string           `json:"include_domains,omitzero"`
-	ExcludeDomains           []string           `json:"exclude_domains,omitzero"`
-	IncludeAnswer            *IncludeAnswer     `json:"include_answer,omitzero"`
-	IncludeRawContent        *IncludeRawContent `json:"include_raw_content,omitzero"`
-	IncludeFavicon           *bool              `json:"include_favicon,omitzero"`
-	Country                  *Country           `json:"country,omitzero"`
-	AutoParameters           *bool              `json:"auto_parameters,omitzero"`
-	ExactMatch               *bool              `json:"exact_match,omitzero"`
-	IncludeUsage             *bool              `json:"include_usage,omitzero"`
+	Query             string             `json:"query"`
+	SearchDepth       SearchDepth        `json:"search_depth,omitzero"`
+	Topic             Topic              `json:"topic,omitzero"`
+	TimeRange         TimeRange          `json:"time_range,omitzero"`
+	StartDate         string             `json:"start_date,omitzero"`
+	EndDate           string             `json:"end_date,omitzero"`
+	MaxResults        uint64             `json:"max_results,omitzero"`
+	ChunksPerSource   uint64             `json:"chunks_per_source,omitzero"`
+	IncludeDomains    []string           `json:"include_domains,omitzero"`
+	ExcludeDomains    []string           `json:"exclude_domains,omitzero"`
+	IncludeAnswer     *IncludeAnswer     `json:"include_answer,omitzero"`
+	IncludeRawContent *IncludeRawContent `json:"include_raw_content,omitzero"`
+	IncludeFavicon    *bool              `json:"include_favicon,omitzero"`
+	Country           string             `json:"country,omitzero"`
+	AutoParameters    *bool              `json:"auto_parameters,omitzero"`
+	ExactMatch        *bool              `json:"exact_match,omitzero"`
+	IncludeUsage      *bool              `json:"include_usage,omitzero"`
 }
 
 // SearchResponse is the response from POST /search.
@@ -101,6 +101,12 @@ type Usage struct {
 
 // Search performs a web search via the Tavily API.
 func (c *Client) Search(ctx context.Context, params *SearchParams) (*SearchResponse, error) {
+	if params == nil {
+		return nil, fmt.Errorf("search failed: params must not be nil")
+	}
+	if strings.TrimSpace(params.Query) == "" {
+		return nil, fmt.Errorf("search failed: query must not be empty")
+	}
 	if params.ChunksPerSource != 0 && params.SearchDepth != SearchDepthAdvanced {
 		return nil, fmt.Errorf("search failed: chunks_per_source is only available when search_depth is advanced")
 	}
@@ -110,21 +116,21 @@ func (c *Client) Search(ctx context.Context, params *SearchParams) (*SearchRespo
 	if len(params.ExcludeDomains) > 150 {
 		return nil, fmt.Errorf("search failed: exclude_domains exceeds maximum of 150, got %d", len(params.ExcludeDomains))
 	}
-	if params.Country != nil {
-		if params.Topic != "" && params.Topic != TopicGeneral {
-			return nil, fmt.Errorf("search failed: country filter is only available when topic is general, got %q", params.Topic)
+	req := *params
+	if req.Country != "" {
+		if req.Topic != "" && req.Topic != TopicGeneral {
+			return nil, fmt.Errorf("search failed: country filter is only available when topic is general, got %q", req.Topic)
 		}
-		if !params.Country.IsValid() {
-			codes := make([]string, len(SupportedCountries))
-			for i, c := range SupportedCountries {
-				codes[i] = string(c)
-			}
-			return nil, fmt.Errorf("search failed: unsupported country %q, supported countries: %s", *params.Country, strings.Join(codes, ", "))
+		countryCode := strings.ToLower(strings.TrimSpace(req.Country))
+		countryName, ok := supportedCountries[countryCode]
+		if !ok {
+			return nil, fmt.Errorf("search failed: unsupported country %q", req.Country)
 		}
+		req.Country = countryName
 	}
 
 	var resp SearchResponse
-	if err := c.do(ctx, "/search", params, &resp); err != nil {
+	if err := c.do(ctx, "/search", &req, &resp); err != nil {
 		return nil, fmt.Errorf("search failed: %w", err)
 	}
 	return &resp, nil
