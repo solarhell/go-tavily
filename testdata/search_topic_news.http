@@ -1,0 +1,39 @@
+### Search with topic=news, max_results=2
+### Note: published_date IS returned for topic=news
+POST https://api.tavily.com/search
+Content-Type: application/json
+Authorization: Bearer {{TAVILY_API_KEY}}
+
+{
+    "query": "trump tariff",
+    "topic": "news",
+    "max_results": 2
+}
+
+### Response:
+# {
+#     "query": "trump tariff",
+#     "follow_up_questions": null,
+#     "answer": null,
+#     "images": [],
+#     "results": [
+#         {
+#             "url": "https://www.nytimes.com/2026/03/02/us/politics/trump-tariffs-winners-losers.html",
+#             "title": "The Unexpected Winners From Trump\u2019s New Global Tariff - The New York Times",
+#             "score": 0.7999589,
+#             "published_date": "Mon, 02 Mar 2026 16:06:15 GMT",
+#             "content": "President Trump\u2019s new 10 percent tariff on global imports has created a new slate of winners and losers, suddenly reshuffling the prospects for countries that have spent many months angling for lower tariff rates than their neighbors and competitors. Yet some products like luxury clothing from Japan and the European Union, which had previously been tariff-free, were now subject to a 10 percent rate, he said. But if Mr. Trump puts in place a new 15 percent global tariffs, that would add to some preexisting tariffs on European exports and push the total tariff rate above 15 percent for some goods. Economists at Oxford Economics, an advisory firm, said that under the 15 percent tariff rate that Mr. Trump had promised, the biggest losers would be Britain and Australia, which previously had lower rates. \u201cThe new 10 percent flat tariff under Section 122 reshuffles the playing field, but so far it\u2019s not triggering a major sourcing surge,\u201d he said.",
+#             "raw_content": null
+#         },
+#         {
+#             "url": "https://www.bbc.com/news/articles/cjwzzq70qgvo",
+#             "title": "Higher tariffs likely this week, says US Treasury - BBC",
+#             "score": 0.79041743,
+#             "published_date": "Wed, 04 Mar 2026 15:17:50 GMT",
+#             "content": "US Treasury Secretary Scott Bessent said the US was \"likely\" to implement a 15% global tariff this week, following conflicting statements from President Donald Trump about the rate. The new tariff is intended to replace the sweeping global import taxes Trump imposed last year but were recently struck down by the Supreme Court. To impose the 10% tariff, the White House used an untested trade authority known as Section 122, which authorises the US president declare a tariff of up to 15% without congressional approval for 150 days under certain conditions. Last April, Trump announced \"Liberation Day\" tariffs on dozens of countries, with rates starting at 10% and climbing toward 50% in some cases. Trump responded by announcing a 10% global tariff, which he claimed on social media the next day he was increasing to 15%. The White House has said it will lean on other legal tools, known as Section 301 and Section 232, to introduce tariffs after the 150 days elapse.",
+#             "raw_content": null
+#         }
+#     ],
+#     "response_time": 0.35,
+#     "request_id": "c0eb72bb-8897-4bf5-9f4f-944aa93ca5df"
+# }

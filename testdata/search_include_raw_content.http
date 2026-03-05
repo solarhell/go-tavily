@@ -1,0 +1,38 @@
+### Search with include_raw_content="markdown", max_results=2
+### Note: raw_content is returned (as markdown) for each result when include_raw_content is set
+### Note: raw_content may be null for some results if the page content cannot be fetched
+POST https://api.tavily.com/search
+Content-Type: application/json
+Authorization: Bearer {{TAVILY_API_KEY}}
+
+{
+    "query": "golang generics",
+    "max_results": 2,
+    "include_raw_content": "markdown"
+}
+
+### Response:
+# {
+#     "query": "golang generics",
+#     "follow_up_questions": null,
+#     "answer": null,
+#     "images": [],
+#     "results": [
+#         {
+#             "url": "https://go.dev/blog/intro-generics",
+#             "title": "An Introduction To Generics - The Go Programming Language",
+#             "content": "# The Go Blog. # An Introduction To Generics. ...",
+#             "score": 0.86136365,
+#             "raw_content": "# [The Go Blog](/blog/)\n\n# An Introduction To Generics\n\nRobert Griesemer and Ian Lance Taylor  \n 22 March 2022\n\n## Introduction\n\nThis blog post is based on our talk at GopherCon 2021:\n\nThe Go 1.18 release adds support for generics. Generics are the biggest change we\u2019ve made to Go since the first open source release. ..."
+#         },
+#         {
+#             "url": "https://go.dev/tour/generics/2",
+#             "title": "Generic types - A Tour of Go",
+#             "content": "In addition to generic functions, Go also supports generic types. A type can be parameterized with a type parameter, which could be useful for implementing",
+#             "score": 0.8080827,
+#             "raw_content": null
+#         }
+#     ],
+#     "response_time": 4.73,
+#     "request_id": "f02df485-46d0-48e0-a9c1-556d045369e0"
+# }

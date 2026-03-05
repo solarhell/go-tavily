@@ -85,13 +85,17 @@ type SearchResponse struct {
 
 // SearchResult represents a single search result.
 type SearchResult struct {
-	Title         string  `json:"title"`
-	URL           string  `json:"url"`
-	Content       string  `json:"content"`
-	RawContent    string  `json:"raw_content,omitzero"`
-	Score         float64 `json:"score"`
-	PublishedDate string  `json:"published_date,omitzero"`
-	Favicon       string  `json:"favicon,omitzero"`
+	Title   string  `json:"title"`
+	URL     string  `json:"url"`
+	Content string  `json:"content"`
+	Score   float64 `json:"score"`
+
+	RawContent string `json:"raw_content,omitzero"` // Only present when IncludeRawContent is set. May be empty if the page content cannot be fetched.
+	Favicon    string `json:"favicon,omitzero"`      // Only present when IncludeFavicon is true.
+
+	// PublishedDate is the publication date of the source.
+	// Only available when Topic is TopicNews.
+	PublishedDate string `json:"published_date,omitzero"`
 }
 
 // Usage represents credit usage information.

@@ -1,0 +1,37 @@
+### Search with topic=finance, max_results=2
+### Note: published_date is NOT returned for topic=finance
+POST https://api.tavily.com/search
+Content-Type: application/json
+Authorization: Bearer {{TAVILY_API_KEY}}
+
+{
+    "query": "apple stock earnings",
+    "topic": "finance",
+    "max_results": 2
+}
+
+### Response:
+# {
+#     "query": "apple stock earnings",
+#     "follow_up_questions": null,
+#     "answer": null,
+#     "images": [],
+#     "results": [
+#         {
+#             "url": "https://finance.yahoo.com/quote/AAPL.VI/earnings/AAPL.VI-Q1-2026-earnings_call-406161.html",
+#             "title": "APPLE INC (AAPL.VI) Q1 FY2026 earnings call transcript",
+#             "content": "Earnings call Apple posted its best-ever quarter with $143.8B in revenue (+16% YoY) and record EPS of $2.84 (+19% YoY), fueled by a 23% surge in",
+#             "score": 0.99994075,
+#             "raw_content": null
+#         },
+#         {
+#             "url": "https://finance.yahoo.com/news/apple-q1-earnings-beat-estimates-133300452.html",
+#             "title": "Apple Q1 Earnings Beat Estimates, iPhone Drives Top-Line Growth",
+#             "content": "**Apple** AAPL reported first-quarter fiscal 2026 GAAP earnings of $2.84 per share, which beat the Zacks Consensus Estimate by 7.17%. Net sales increased 15.7% year over year to $143.77 billion and beat the Zacks Consensus Estimate by 4.3%. Services revenues grew 14% year over year to $30.01 billion and accounted for 20.9% of sales. iPhone sales jumped 23.3% year over year to $85.27 billion and accounted for 59.3% of net sales. iPad sales of $8.6 billion increased 6.3% year over year and accounted for 6% of net sales. Mac sales of $8.39 billion decreased 6.7% year over year and accounted for 5.8% of net sales. Europe\u2019s sales grew 12.7% year over year to $38.15 billion in the reported quarter and accounted for 26.5% of net sales. Japan sales increased 4.7% year over year to $9.41 billion and accounted for 6.5% of sales. Apple expects the March quarter\u2019s (second-quarter fiscal 2026) net sales to grow between 13% and 16% on a year-over-year basis.",
+#             "score": 0.99986446,
+#             "raw_content": null
+#         }
+#     ],
+#     "response_time": 1.9,
+#     "request_id": "51833bdb-4f07-4337-b8a3-853e380e5579"
+# }

@@ -1,0 +1,40 @@
+### Search with include_usage=true, max_results=2
+### Note: usage.credits is returned when include_usage is true
+POST https://api.tavily.com/search
+Content-Type: application/json
+Authorization: Bearer {{TAVILY_API_KEY}}
+
+{
+    "query": "golang generics",
+    "max_results": 2,
+    "include_usage": true
+}
+
+### Response:
+# {
+#     "query": "golang generics",
+#     "follow_up_questions": null,
+#     "answer": null,
+#     "images": [],
+#     "results": [
+#         {
+#             "url": "https://go.dev/blog/intro-generics",
+#             "title": "An Introduction To Generics - The Go Programming Language",
+#             "content": "# The Go Blog. # An Introduction To Generics. ## Introduction. This blog post is based on our talk at GopherCon 2021:. The Go 1.18 release adds support for generics. Generic types can have methods, like `Lookup` in this example. In the generic `GMin`, the type constraint is imported from the constraints package. Within a generic function body, if the type of a operand is a type parameter `P` with constraint `C`, operations are permitted if they are permitted by all types in the type set of `C` (there are currently some implementation restrictions here, but ordinary code is unlikely to encounter them). This was just an introduction to constraint type inference. Generics are a big new language feature in 1.18. That will only happen as more people write and use generic code. That caution aside, we\u2019re excited to have generics available, and we hope that they will make Go programmers more productive.",
+#             "score": 0.86136365,
+#             "raw_content": null
+#         },
+#         {
+#             "url": "https://go.dev/tour/generics/2",
+#             "title": "Generic types - A Tour of Go",
+#             "content": "In addition to generic functions, Go also supports generic types. A type can be parameterized with a type parameter, which could be useful for implementing",
+#             "score": 0.8080827,
+#             "raw_content": null
+#         }
+#     ],
+#     "response_time": 1.13,
+#     "usage": {
+#         "credits": 1
+#     },
+#     "request_id": "3da0c099-44f3-4126-9e60-dc1a87aa4762"
+# }

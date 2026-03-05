@@ -1,0 +1,36 @@
+### Search with topic=general (default), max_results=2
+### Note: published_date is NOT returned for topic=general
+POST https://api.tavily.com/search
+Content-Type: application/json
+Authorization: Bearer {{TAVILY_API_KEY}}
+
+{
+    "query": "latest news today",
+    "max_results": 2
+}
+
+### Response:
+# {
+#     "query": "latest news today",
+#     "follow_up_questions": null,
+#     "answer": null,
+#     "images": [],
+#     "results": [
+#         {
+#             "url": "https://www.cnn.com/",
+#             "title": "CNN: Breaking News, Latest News and Videos",
+#             "content": "View the latest news and breaking news today for U.S., world, weather, entertainment, politics and health at CNN.com.",
+#             "score": 0.9777139,
+#             "raw_content": null
+#         },
+#         {
+#             "url": "https://www.ms.now/",
+#             "title": "MS NOW - Breaking News and News Today | Latest News",
+#             "content": "MS NOW breaking news and the latest news for today. Get daily news from local news reporters and world news updates with live audio & video from our team.",
+#             "score": 0.9764905,
+#             "raw_content": null
+#         }
+#     ],
+#     "response_time": 0.59,
+#     "request_id": "f97cbeac-dd76-4b46-bf6c-884b026dc5c2"
+# }
