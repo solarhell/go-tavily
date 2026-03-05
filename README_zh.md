@@ -5,17 +5,17 @@
 [![GoDoc](https://img.shields.io/badge/pkg.go.dev-reference-007d9c?style=for-the-badge&logo=go)](https://pkg.go.dev/github.com/solarhell/go-tavily)
 [![CodeRabbit Pull Request Reviews](https://img.shields.io/coderabbit/prs/github/solarhell/go-tavily?utm_source=oss&utm_medium=github&utm_campaign=solarhell%2Fgo-tavily&labelColor=171717&color=FF570A&link=https%3A%2F%2Fcoderabbit.ai&label=CodeRabbit+Reviews)](https://coderabbit.ai)
 
-English | [中文](README_zh.md)
+[English](README.md) | 中文
 
-A thin, type-safe Go client for the [Tavily API](https://docs.tavily.com). Built for Go 1.26+.
+轻量、类型安全的 [Tavily API](https://docs.tavily.com) Go 客户端，基于 Go 1.26+。
 
-## Installation
+## 安装
 
 ```bash
 go get github.com/solarhell/go-tavily
 ```
 
-## Quick Start
+## 快速开始
 
 ```go
 client := tavily.New("tvly-your-api-key")
@@ -25,26 +25,24 @@ resp, err := client.Search(ctx, &tavily.SearchParams{
 })
 ```
 
-## Search
+## 搜索
 
 ```go
-answerMode := tavily.IncludeAnswerAdvanced
-
 resp, err := client.Search(ctx, &tavily.SearchParams{
     Query:         "AI news",
     SearchDepth:   tavily.SearchDepthAdvanced,
     Topic:         tavily.TopicNews,
     TimeRange:     tavily.TimeRangeWeek,
     MaxResults:    10,
-    IncludeAnswer: &answerMode,
+    IncludeAnswer: new(tavily.IncludeAnswerAdvanced),
 })
 ```
 
-Zero-value fields are omitted from the request — the API uses its own server-side defaults.
+零值字段会从请求中省略，API 使用其服务端默认值。
 
-## Country Filter
+## 国家筛选
 
-Use ISO 3166-1 alpha-2 country codes to boost search results from a specific country. The country filter is only available when `topic` is `general` (or unset).
+使用 ISO 3166-1 alpha-2 国家代码来提升特定国家的搜索结果权重。国家筛选仅在 `topic` 为 `general`（或未设置）时可用。
 
 ```go
 resp, err := client.Search(ctx, &tavily.SearchParams{
@@ -53,11 +51,11 @@ resp, err := client.Search(ctx, &tavily.SearchParams{
 })
 ```
 
-This design is intentional for LLM tool-use scenarios: when exposing search as a tool to an LLM, the tool schema only needs to specify "ISO 3166-1 alpha-2 country code" instead of enumerating 160+ country name strings, since LLMs already know the ISO standard.
+这个设计是为 LLM 工具调用场景考虑的：当你把搜索能力作为工具暴露给 LLM 时，工具的 schema 只需要声明"ISO 3166-1 alpha-2 国家代码"即可，无需枚举 160 多个国家名称字符串，因为 LLM 天然了解 ISO 标准。
 
-> **Note:** Tavily supports ~160 countries, which is a subset of the full ISO 3166-1 alpha-2 standard (249 codes). Unsupported codes will be rejected at call time.
+> **注意：** Tavily 支持约 160 个国家，是完整 ISO 3166-1 alpha-2 标准（249 个代码）的子集。不支持的代码会在调用时被拒绝。
 
-## Extract
+## 内容提取
 
 ```go
 resp, err := client.Extract(ctx, &tavily.ExtractParams{
@@ -66,7 +64,7 @@ resp, err := client.Extract(ctx, &tavily.ExtractParams{
 })
 ```
 
-## Client Options
+## 客户端配置
 
 ```go
 client := tavily.New("tvly-your-api-key",
@@ -75,9 +73,9 @@ client := tavily.New("tvly-your-api-key",
 )
 ```
 
-If the API key is empty, it reads from the `TAVILY_API_KEY` environment variable.
+如果 API key 为空，会自动读取 `TAVILY_API_KEY` 环境变量。
 
-## Error Handling
+## 错误处理
 
 ```go
 resp, err := client.Search(ctx, &tavily.SearchParams{Query: "test"})
@@ -86,26 +84,26 @@ if err != nil {
     if errors.As(err, &apiErr) {
         switch {
         case apiErr.IsUnauthorized():
-            // invalid API key (401)
+            // API key 无效 (401)
         case apiErr.IsRateLimit():
-            // rate limited (429)
+            // 触发限流 (429)
         case apiErr.IsPlanLimitExceeded():
-            // plan usage limit (432)
+            // 套餐用量超限 (432)
         case apiErr.IsPayGoLimitExceeded():
-            // pay-as-you-go limit (433)
+            // 按量付费额度超限 (433)
         case apiErr.IsBadRequest():
-            // invalid parameters (400)
+            // 请求参数无效 (400)
         }
     }
 }
 ```
 
-## Testing
+## 测试
 
 ```bash
 go test -v -race ./...
 ```
 
-## Links
+## 链接
 
-- [Tavily API Documentation](https://docs.tavily.com)
+- [Tavily API 文档](https://docs.tavily.com)

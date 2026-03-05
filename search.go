@@ -3,6 +3,7 @@ package tavily
 import (
 	"context"
 	"fmt"
+	"strings"
 )
 
 // SearchDepth controls the depth of the search.
@@ -114,7 +115,11 @@ func (c *Client) Search(ctx context.Context, params *SearchParams) (*SearchRespo
 			return nil, fmt.Errorf("search failed: country filter is only available when topic is general, got %q", params.Topic)
 		}
 		if !params.Country.IsValid() {
-			return nil, fmt.Errorf("search failed: unsupported country %q", *params.Country)
+			codes := make([]string, len(SupportedCountries))
+			for i, c := range SupportedCountries {
+				codes[i] = string(c)
+			}
+			return nil, fmt.Errorf("search failed: unsupported country %q, supported countries: %s", *params.Country, strings.Join(codes, ", "))
 		}
 	}
 

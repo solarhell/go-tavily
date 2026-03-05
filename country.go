@@ -1,6 +1,17 @@
 package tavily
 
+import "slices"
+
 // Country represents an ISO 3166-1 alpha-2 country code for boosting search results.
+//
+// The Tavily API accepts full country names (e.g. "united states"), but this SDK
+// uses ISO alpha-2 codes (e.g. CountryUS) as the public interface. This design is
+// intentional for LLM tool-use scenarios: when exposing search as a tool to an LLM,
+// the tool schema only needs to specify "ISO 3166-1 alpha-2 country code" instead of
+// enumerating 160+ country name strings, since LLMs already know the ISO standard.
+//
+// Note: Tavily supports ~160 countries, which is a subset of the full ISO 3166-1
+// alpha-2 standard (249 codes). Unsupported codes will be rejected by [Country.IsValid].
 type Country string
 
 const (
@@ -172,35 +183,35 @@ const (
 	CountryZW Country = "zimbabwe"
 )
 
+// SupportedCountries is the list of all supported ISO 3166-1 alpha-2 country codes.
+var SupportedCountries = [...]Country{
+	CountryAF, CountryAL, CountryDZ, CountryAD, CountryAO, CountryAR, CountryAM,
+	CountryAU, CountryAT, CountryAZ, CountryBS, CountryBH, CountryBD, CountryBB,
+	CountryBY, CountryBE, CountryBZ, CountryBJ, CountryBT, CountryBO, CountryBA,
+	CountryBW, CountryBR, CountryBN, CountryBG, CountryBF, CountryBI, CountryKH,
+	CountryCM, CountryCA, CountryCV, CountryCF, CountryTD, CountryCL, CountryCN,
+	CountryCO, CountryKM, CountryCG, CountryCR, CountryHR, CountryCU, CountryCY,
+	CountryCZ, CountryDK, CountryDJ, CountryDO, CountryEC, CountryEG, CountrySV,
+	CountryGQ, CountryER, CountryEE, CountryET, CountryFJ, CountryFI, CountryFR,
+	CountryGA, CountryGM, CountryGE, CountryDE, CountryGH, CountryGR, CountryGT,
+	CountryGN, CountryHT, CountryHN, CountryHU, CountryIS, CountryIN, CountryID,
+	CountryIR, CountryIQ, CountryIE, CountryIL, CountryIT, CountryJM, CountryJP,
+	CountryJO, CountryKZ, CountryKE, CountryKW, CountryKG, CountryLV, CountryLB,
+	CountryLS, CountryLR, CountryLY, CountryLI, CountryLT, CountryLU, CountryMG,
+	CountryMW, CountryMY, CountryMV, CountryML, CountryMT, CountryMR, CountryMU,
+	CountryMX, CountryMD, CountryMC, CountryMN, CountryME, CountryMA, CountryMZ,
+	CountryMM, CountryNA, CountryNP, CountryNL, CountryNZ, CountryNI, CountryNE,
+	CountryNG, CountryKP, CountryMK, CountryNO, CountryOM, CountryPK, CountryPA,
+	CountryPG, CountryPY, CountryPE, CountryPH, CountryPL, CountryPT, CountryQA,
+	CountryRO, CountryRU, CountryRW, CountrySA, CountrySN, CountryRS, CountrySG,
+	CountrySK, CountrySI, CountrySO, CountryZA, CountryKR, CountrySS, CountryES,
+	CountryLK, CountrySD, CountrySE, CountryCH, CountrySY, CountryTW, CountryTJ,
+	CountryTZ, CountryTH, CountryTG, CountryTT, CountryTN, CountryTR, CountryTM,
+	CountryUG, CountryUA, CountryAE, CountryGB, CountryUS, CountryUY, CountryUZ,
+	CountryVE, CountryVN, CountryYE, CountryZM, CountryZW,
+}
+
 // IsValid reports whether c is a supported country code.
 func (c Country) IsValid() bool {
-	switch c {
-	case CountryAF, CountryAL, CountryDZ, CountryAD, CountryAO, CountryAR, CountryAM,
-		CountryAU, CountryAT, CountryAZ, CountryBS, CountryBH, CountryBD, CountryBB,
-		CountryBY, CountryBE, CountryBZ, CountryBJ, CountryBT, CountryBO, CountryBA,
-		CountryBW, CountryBR, CountryBN, CountryBG, CountryBF, CountryBI, CountryKH,
-		CountryCM, CountryCA, CountryCV, CountryCF, CountryTD, CountryCL, CountryCN,
-		CountryCO, CountryKM, CountryCG, CountryCR, CountryHR, CountryCU, CountryCY,
-		CountryCZ, CountryDK, CountryDJ, CountryDO, CountryEC, CountryEG, CountrySV,
-		CountryGQ, CountryER, CountryEE, CountryET, CountryFJ, CountryFI, CountryFR,
-		CountryGA, CountryGM, CountryGE, CountryDE, CountryGH, CountryGR, CountryGT,
-		CountryGN, CountryHT, CountryHN, CountryHU, CountryIS, CountryIN, CountryID,
-		CountryIR, CountryIQ, CountryIE, CountryIL, CountryIT, CountryJM, CountryJP,
-		CountryJO, CountryKZ, CountryKE, CountryKW, CountryKG, CountryLV, CountryLB,
-		CountryLS, CountryLR, CountryLY, CountryLI, CountryLT, CountryLU, CountryMG,
-		CountryMW, CountryMY, CountryMV, CountryML, CountryMT, CountryMR, CountryMU,
-		CountryMX, CountryMD, CountryMC, CountryMN, CountryME, CountryMA, CountryMZ,
-		CountryMM, CountryNA, CountryNP, CountryNL, CountryNZ, CountryNI, CountryNE,
-		CountryNG, CountryKP, CountryMK, CountryNO, CountryOM, CountryPK, CountryPA,
-		CountryPG, CountryPY, CountryPE, CountryPH, CountryPL, CountryPT, CountryQA,
-		CountryRO, CountryRU, CountryRW, CountrySA, CountrySN, CountryRS, CountrySG,
-		CountrySK, CountrySI, CountrySO, CountryZA, CountryKR, CountrySS, CountryES,
-		CountryLK, CountrySD, CountrySE, CountryCH, CountrySY, CountryTW, CountryTJ,
-		CountryTZ, CountryTH, CountryTG, CountryTT, CountryTN, CountryTR, CountryTM,
-		CountryUG, CountryUA, CountryAE, CountryGB, CountryUS, CountryUY, CountryUZ,
-		CountryVE, CountryVN, CountryYE, CountryZM, CountryZW:
-		return true
-	default:
-		return false
-	}
+	return slices.Contains(SupportedCountries[:], c)
 }
