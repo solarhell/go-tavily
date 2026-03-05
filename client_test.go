@@ -2,6 +2,7 @@ package tavily
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"net/http"
 	"net/http/httptest"
@@ -146,6 +147,36 @@ func TestSearchWithOptions(t *testing.T) {
 	}
 }
 
+func TestSearchCountryCodeMappedToCountryName(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		var req SearchParams
+		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+			t.Fatalf("decode request body failed: %v", err)
+		}
+		if req.Country != "united states" {
+			t.Fatalf("country = %q, want %q", req.Country, "united states")
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		_, _ = w.Write([]byte(`{
+			"query": "test query",
+			"response_time": 0.5,
+			"results": []
+		}`))
+	}))
+	defer server.Close()
+
+	client := New("tvly-test-key", WithBaseURL(server.URL))
+	_, err := client.Search(context.Background(), &SearchParams{
+		Query:   "test query",
+		Topic:   TopicGeneral,
+		Country: "US",
+	})
+	if err != nil {
+		t.Fatalf("Search() error = %v", err)
+	}
+}
+
 func TestExtract(t *testing.T) {
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
@@ -253,30 +284,25 @@ func TestSearchValidation(t *testing.T) {
 		},
 		{
 			name:    "country with news topic",
-			params:  &SearchParams{Query: "test", Country: new(CountryUS), Topic: TopicNews},
+			params:  &SearchParams{Query: "test", Country: "us", Topic: TopicNews},
 			wantErr: "country filter is only available when topic is general",
 		},
 		{
 			name:    "country with finance topic",
-			params:  &SearchParams{Query: "test", Country: new(CountryUS), Topic: TopicFinance},
+			params:  &SearchParams{Query: "test", Country: "US", Topic: TopicFinance},
 			wantErr: "country filter is only available when topic is general",
 		},
 		{
 			name:   "country with general topic",
-			params: &SearchParams{Query: "test", Country: new(CountryUS), Topic: TopicGeneral},
+			params: &SearchParams{Query: "test", Country: "US", Topic: TopicGeneral},
 		},
 		{
 			name:   "country without topic",
-			params: &SearchParams{Query: "test", Country: new(CountryCN)},
+			params: &SearchParams{Query: "test", Country: "cn"},
 		},
 		{
 			name:    "invalid country",
-			params:  &SearchParams{Query: "test", Country: new(Country("invalid"))},
-			wantErr: "unsupported country",
-		},
-		{
-			name:    "empty country pointer",
-			params:  &SearchParams{Query: "test", Country: new(Country(""))},
+			params:  &SearchParams{Query: "test", Country: "invalid"},
 			wantErr: "unsupported country",
 		},
 	}
@@ -300,18 +326,18 @@ func TestSearchValidation(t *testing.T) {
 	}
 }
 
-func TestCountryIsValid(t *testing.T) {
-	if !CountryUS.IsValid() {
-		t.Error("CountryUS should be valid")
+func TestIsValidCountry(t *testing.T) {
+	if !isValidCountry("us") {
+		t.Error("'us' should be valid")
 	}
-	if !CountryCN.IsValid() {
-		t.Error("CountryCN should be valid")
+	if !isValidCountry("CN") {
+		t.Error("'CN' should be valid (case-insensitive)")
 	}
-	if Country("invalid").IsValid() {
-		t.Error("invalid country should not be valid")
+	if isValidCountry("invalid") {
+		t.Error("'invalid' should not be valid")
 	}
-	if Country("").IsValid() {
-		t.Error("empty country should not be valid")
+	if isValidCountry("") {
+		t.Error("empty string should not be valid")
 	}
 }
 

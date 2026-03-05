@@ -44,18 +44,20 @@ Zero-value fields are omitted from the request — the API uses its own server-s
 
 ## Country Filter
 
-Use ISO 3166-1 alpha-2 country codes to boost search results from a specific country. The country filter is only available when `topic` is `general` (or unset).
+Use an ISO 3166-1 alpha-2 country code to boost search results from a specific country. The country filter is only available when `topic` is `general` (or unset). Country codes are case-insensitive.
 
 ```go
 resp, err := client.Search(ctx, &tavily.SearchParams{
     Query:   "latest tech news",
-    Country: new(tavily.CountryUS),
+    Country: "US",
 })
 ```
 
-This design is intentional for LLM tool-use scenarios: when exposing search as a tool to an LLM, the tool schema only needs to specify "ISO 3166-1 alpha-2 country code" instead of enumerating 160+ country name strings, since LLMs already know the ISO standard.
-
-> **Note:** Tavily supports ~160 countries, which is a subset of the full ISO 3166-1 alpha-2 standard (249 codes). Unsupported codes will be rejected at call time.
+> **Note:** Tavily supports ~160 countries. Unsupported country codes will be rejected at call time.  
+> Supported country code mapping file: [`country.go`](./country.go).  
+> Example codes: `US`/`us`, `CN`/`cn`, `JP`/`jp`.  
+> The SDK handles country codes case-insensitively.  
+> Current SDK mapping is implemented as of **2026-03-05**.
 
 ## Extract
 
