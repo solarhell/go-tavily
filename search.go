@@ -101,6 +101,12 @@ type Usage struct {
 
 // Search performs a web search via the Tavily API.
 func (c *Client) Search(ctx context.Context, params *SearchParams) (*SearchResponse, error) {
+	if params == nil {
+		return nil, fmt.Errorf("search failed: params must not be nil")
+	}
+	if strings.TrimSpace(params.Query) == "" {
+		return nil, fmt.Errorf("search failed: query must not be empty")
+	}
 	if params.ChunksPerSource != 0 && params.SearchDepth != SearchDepthAdvanced {
 		return nil, fmt.Errorf("search failed: chunks_per_source is only available when search_depth is advanced")
 	}

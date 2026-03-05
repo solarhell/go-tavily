@@ -278,6 +278,21 @@ func TestSearchValidation(t *testing.T) {
 		wantErr string
 	}{
 		{
+			name:    "nil params",
+			params:  nil,
+			wantErr: "params must not be nil",
+		},
+		{
+			name:    "empty query",
+			params:  &SearchParams{Query: ""},
+			wantErr: "query must not be empty",
+		},
+		{
+			name:    "whitespace only query",
+			params:  &SearchParams{Query: "   "},
+			wantErr: "query must not be empty",
+		},
+		{
 			name:    "chunks_per_source without advanced",
 			params:  &SearchParams{Query: "test", ChunksPerSource: 2, SearchDepth: SearchDepthBasic},
 			wantErr: "chunks_per_source is only available when search_depth is advanced",
