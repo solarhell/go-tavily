@@ -110,20 +110,21 @@ func (c *Client) Search(ctx context.Context, params *SearchParams) (*SearchRespo
 	if len(params.ExcludeDomains) > 150 {
 		return nil, fmt.Errorf("search failed: exclude_domains exceeds maximum of 150, got %d", len(params.ExcludeDomains))
 	}
-	if params.Country != "" {
-		if params.Topic != "" && params.Topic != TopicGeneral {
-			return nil, fmt.Errorf("search failed: country filter is only available when topic is general, got %q", params.Topic)
+	req := *params
+	if req.Country != "" {
+		if req.Topic != "" && req.Topic != TopicGeneral {
+			return nil, fmt.Errorf("search failed: country filter is only available when topic is general, got %q", req.Topic)
 		}
-		countryCode := strings.ToLower(strings.TrimSpace(params.Country))
+		countryCode := strings.ToLower(strings.TrimSpace(req.Country))
 		countryName, ok := supportedCountries[countryCode]
 		if !ok {
-			return nil, fmt.Errorf("search failed: unsupported country %q", params.Country)
+			return nil, fmt.Errorf("search failed: unsupported country %q", req.Country)
 		}
-		params.Country = countryName
+		req.Country = countryName
 	}
 
 	var resp SearchResponse
-	if err := c.do(ctx, "/search", params, &resp); err != nil {
+	if err := c.do(ctx, "/search", &req, &resp); err != nil {
 		return nil, fmt.Errorf("search failed: %w", err)
 	}
 	return &resp, nil

@@ -167,13 +167,21 @@ func TestSearchCountryCodeMappedToCountryName(t *testing.T) {
 	defer server.Close()
 
 	client := New("tvly-test-key", WithBaseURL(server.URL))
-	_, err := client.Search(context.Background(), &SearchParams{
+	params := &SearchParams{
 		Query:   "test query",
 		Topic:   TopicGeneral,
 		Country: "US",
-	})
+	}
+	_, err := client.Search(context.Background(), params)
 	if err != nil {
 		t.Fatalf("Search() error = %v", err)
+	}
+	if params.Country != "US" {
+		t.Fatalf("params.Country mutated = %q, want %q", params.Country, "US")
+	}
+	_, err = client.Search(context.Background(), params)
+	if err != nil {
+		t.Fatalf("second Search() error = %v", err)
 	}
 }
 
