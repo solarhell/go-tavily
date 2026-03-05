@@ -130,14 +130,12 @@ func TestSearchWithOptions(t *testing.T) {
 	defer server.Close()
 
 	client := New("tvly-test-key", WithBaseURL(server.URL))
-	answerMode := IncludeAnswerBasic
-
 	result, err := client.Search(context.Background(), &SearchParams{
 		Query:         "test query",
 		SearchDepth:   SearchDepthAdvanced,
 		Topic:         TopicNews,
 		MaxResults:    10,
-		IncludeAnswer: &answerMode,
+		IncludeAnswer: new(IncludeAnswerBasic),
 	})
 	if err != nil {
 		t.Fatalf("Search() error = %v", err)
@@ -223,6 +221,97 @@ func TestMissingAPIKey(t *testing.T) {
 	}
 	if !apiErr.IsUnauthorized() {
 		t.Error("Expected unauthorized error")
+	}
+}
+
+func TestSearchValidation(t *testing.T) {
+	client := New("tvly-test-key", WithBaseURL("http://unused"))
+
+	tests := []struct {
+		name    string
+		params  *SearchParams
+		wantErr string
+	}{
+		{
+			name:    "chunks_per_source without advanced",
+			params:  &SearchParams{Query: "test", ChunksPerSource: 2, SearchDepth: SearchDepthBasic},
+			wantErr: "chunks_per_source is only available when search_depth is advanced",
+		},
+		{
+			name:   "chunks_per_source with advanced",
+			params: &SearchParams{Query: "test", ChunksPerSource: 2, SearchDepth: SearchDepthAdvanced},
+		},
+		{
+			name:    "include_domains exceeds 300",
+			params:  &SearchParams{Query: "test", IncludeDomains: make([]string, 301)},
+			wantErr: "include_domains exceeds maximum of 300",
+		},
+		{
+			name:    "exclude_domains exceeds 150",
+			params:  &SearchParams{Query: "test", ExcludeDomains: make([]string, 151)},
+			wantErr: "exclude_domains exceeds maximum of 150",
+		},
+		{
+			name:    "country with news topic",
+			params:  &SearchParams{Query: "test", Country: new(CountryUS), Topic: TopicNews},
+			wantErr: "country filter is only available when topic is general",
+		},
+		{
+			name:    "country with finance topic",
+			params:  &SearchParams{Query: "test", Country: new(CountryUS), Topic: TopicFinance},
+			wantErr: "country filter is only available when topic is general",
+		},
+		{
+			name:   "country with general topic",
+			params: &SearchParams{Query: "test", Country: new(CountryUS), Topic: TopicGeneral},
+		},
+		{
+			name:   "country without topic",
+			params: &SearchParams{Query: "test", Country: new(CountryCN)},
+		},
+		{
+			name:    "invalid country",
+			params:  &SearchParams{Query: "test", Country: new(Country("invalid"))},
+			wantErr: "unsupported country",
+		},
+		{
+			name:    "empty country pointer",
+			params:  &SearchParams{Query: "test", Country: new(Country(""))},
+			wantErr: "unsupported country",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			_, err := client.Search(context.Background(), tt.params)
+			if tt.wantErr == "" {
+				if err != nil && !strings.Contains(err.Error(), "request failed") {
+					t.Fatalf("unexpected validation error: %v", err)
+				}
+				return
+			}
+			if err == nil {
+				t.Fatal("expected error, got nil")
+			}
+			if !strings.Contains(err.Error(), tt.wantErr) {
+				t.Errorf("error = %q, want substring %q", err.Error(), tt.wantErr)
+			}
+		})
+	}
+}
+
+func TestCountryIsValid(t *testing.T) {
+	if !CountryUS.IsValid() {
+		t.Error("CountryUS should be valid")
+	}
+	if !CountryCN.IsValid() {
+		t.Error("CountryCN should be valid")
+	}
+	if Country("invalid").IsValid() {
+		t.Error("invalid country should not be valid")
+	}
+	if Country("").IsValid() {
+		t.Error("empty country should not be valid")
 	}
 }
 

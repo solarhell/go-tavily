@@ -1,0 +1,206 @@
+package tavily
+
+// Country represents an ISO 3166-1 alpha-2 country code for boosting search results.
+type Country string
+
+const (
+	CountryAF Country = "afghanistan"
+	CountryAL Country = "albania"
+	CountryDZ Country = "algeria"
+	CountryAD Country = "andorra"
+	CountryAO Country = "angola"
+	CountryAR Country = "argentina"
+	CountryAM Country = "armenia"
+	CountryAU Country = "australia"
+	CountryAT Country = "austria"
+	CountryAZ Country = "azerbaijan"
+	CountryBS Country = "bahamas"
+	CountryBH Country = "bahrain"
+	CountryBD Country = "bangladesh"
+	CountryBB Country = "barbados"
+	CountryBY Country = "belarus"
+	CountryBE Country = "belgium"
+	CountryBZ Country = "belize"
+	CountryBJ Country = "benin"
+	CountryBT Country = "bhutan"
+	CountryBO Country = "bolivia"
+	CountryBA Country = "bosnia and herzegovina"
+	CountryBW Country = "botswana"
+	CountryBR Country = "brazil"
+	CountryBN Country = "brunei"
+	CountryBG Country = "bulgaria"
+	CountryBF Country = "burkina faso"
+	CountryBI Country = "burundi"
+	CountryKH Country = "cambodia"
+	CountryCM Country = "cameroon"
+	CountryCA Country = "canada"
+	CountryCV Country = "cape verde"
+	CountryCF Country = "central african republic"
+	CountryTD Country = "chad"
+	CountryCL Country = "chile"
+	CountryCN Country = "china"
+	CountryCO Country = "colombia"
+	CountryKM Country = "comoros"
+	CountryCG Country = "congo"
+	CountryCR Country = "costa rica"
+	CountryHR Country = "croatia"
+	CountryCU Country = "cuba"
+	CountryCY Country = "cyprus"
+	CountryCZ Country = "czech republic"
+	CountryDK Country = "denmark"
+	CountryDJ Country = "djibouti"
+	CountryDO Country = "dominican republic"
+	CountryEC Country = "ecuador"
+	CountryEG Country = "egypt"
+	CountrySV Country = "el salvador"
+	CountryGQ Country = "equatorial guinea"
+	CountryER Country = "eritrea"
+	CountryEE Country = "estonia"
+	CountryET Country = "ethiopia"
+	CountryFJ Country = "fiji"
+	CountryFI Country = "finland"
+	CountryFR Country = "france"
+	CountryGA Country = "gabon"
+	CountryGM Country = "gambia"
+	CountryGE Country = "georgia"
+	CountryDE Country = "germany"
+	CountryGH Country = "ghana"
+	CountryGR Country = "greece"
+	CountryGT Country = "guatemala"
+	CountryGN Country = "guinea"
+	CountryHT Country = "haiti"
+	CountryHN Country = "honduras"
+	CountryHU Country = "hungary"
+	CountryIS Country = "iceland"
+	CountryIN Country = "india"
+	CountryID Country = "indonesia"
+	CountryIR Country = "iran"
+	CountryIQ Country = "iraq"
+	CountryIE Country = "ireland"
+	CountryIL Country = "israel"
+	CountryIT Country = "italy"
+	CountryJM Country = "jamaica"
+	CountryJP Country = "japan"
+	CountryJO Country = "jordan"
+	CountryKZ Country = "kazakhstan"
+	CountryKE Country = "kenya"
+	CountryKW Country = "kuwait"
+	CountryKG Country = "kyrgyzstan"
+	CountryLV Country = "latvia"
+	CountryLB Country = "lebanon"
+	CountryLS Country = "lesotho"
+	CountryLR Country = "liberia"
+	CountryLY Country = "libya"
+	CountryLI Country = "liechtenstein"
+	CountryLT Country = "lithuania"
+	CountryLU Country = "luxembourg"
+	CountryMG Country = "madagascar"
+	CountryMW Country = "malawi"
+	CountryMY Country = "malaysia"
+	CountryMV Country = "maldives"
+	CountryML Country = "mali"
+	CountryMT Country = "malta"
+	CountryMR Country = "mauritania"
+	CountryMU Country = "mauritius"
+	CountryMX Country = "mexico"
+	CountryMD Country = "moldova"
+	CountryMC Country = "monaco"
+	CountryMN Country = "mongolia"
+	CountryME Country = "montenegro"
+	CountryMA Country = "morocco"
+	CountryMZ Country = "mozambique"
+	CountryMM Country = "myanmar"
+	CountryNA Country = "namibia"
+	CountryNP Country = "nepal"
+	CountryNL Country = "netherlands"
+	CountryNZ Country = "new zealand"
+	CountryNI Country = "nicaragua"
+	CountryNE Country = "niger"
+	CountryNG Country = "nigeria"
+	CountryKP Country = "north korea"
+	CountryMK Country = "north macedonia"
+	CountryNO Country = "norway"
+	CountryOM Country = "oman"
+	CountryPK Country = "pakistan"
+	CountryPA Country = "panama"
+	CountryPG Country = "papua new guinea"
+	CountryPY Country = "paraguay"
+	CountryPE Country = "peru"
+	CountryPH Country = "philippines"
+	CountryPL Country = "poland"
+	CountryPT Country = "portugal"
+	CountryQA Country = "qatar"
+	CountryRO Country = "romania"
+	CountryRU Country = "russia"
+	CountryRW Country = "rwanda"
+	CountrySA Country = "saudi arabia"
+	CountrySN Country = "senegal"
+	CountryRS Country = "serbia"
+	CountrySG Country = "singapore"
+	CountrySK Country = "slovakia"
+	CountrySI Country = "slovenia"
+	CountrySO Country = "somalia"
+	CountryZA Country = "south africa"
+	CountryKR Country = "south korea"
+	CountrySS Country = "south sudan"
+	CountryES Country = "spain"
+	CountryLK Country = "sri lanka"
+	CountrySD Country = "sudan"
+	CountrySE Country = "sweden"
+	CountryCH Country = "switzerland"
+	CountrySY Country = "syria"
+	CountryTW Country = "taiwan"
+	CountryTJ Country = "tajikistan"
+	CountryTZ Country = "tanzania"
+	CountryTH Country = "thailand"
+	CountryTG Country = "togo"
+	CountryTT Country = "trinidad and tobago"
+	CountryTN Country = "tunisia"
+	CountryTR Country = "turkey"
+	CountryTM Country = "turkmenistan"
+	CountryUG Country = "uganda"
+	CountryUA Country = "ukraine"
+	CountryAE Country = "united arab emirates"
+	CountryGB Country = "united kingdom"
+	CountryUS Country = "united states"
+	CountryUY Country = "uruguay"
+	CountryUZ Country = "uzbekistan"
+	CountryVE Country = "venezuela"
+	CountryVN Country = "vietnam"
+	CountryYE Country = "yemen"
+	CountryZM Country = "zambia"
+	CountryZW Country = "zimbabwe"
+)
+
+// IsValid reports whether c is a supported country code.
+func (c Country) IsValid() bool {
+	switch c {
+	case CountryAF, CountryAL, CountryDZ, CountryAD, CountryAO, CountryAR, CountryAM,
+		CountryAU, CountryAT, CountryAZ, CountryBS, CountryBH, CountryBD, CountryBB,
+		CountryBY, CountryBE, CountryBZ, CountryBJ, CountryBT, CountryBO, CountryBA,
+		CountryBW, CountryBR, CountryBN, CountryBG, CountryBF, CountryBI, CountryKH,
+		CountryCM, CountryCA, CountryCV, CountryCF, CountryTD, CountryCL, CountryCN,
+		CountryCO, CountryKM, CountryCG, CountryCR, CountryHR, CountryCU, CountryCY,
+		CountryCZ, CountryDK, CountryDJ, CountryDO, CountryEC, CountryEG, CountrySV,
+		CountryGQ, CountryER, CountryEE, CountryET, CountryFJ, CountryFI, CountryFR,
+		CountryGA, CountryGM, CountryGE, CountryDE, CountryGH, CountryGR, CountryGT,
+		CountryGN, CountryHT, CountryHN, CountryHU, CountryIS, CountryIN, CountryID,
+		CountryIR, CountryIQ, CountryIE, CountryIL, CountryIT, CountryJM, CountryJP,
+		CountryJO, CountryKZ, CountryKE, CountryKW, CountryKG, CountryLV, CountryLB,
+		CountryLS, CountryLR, CountryLY, CountryLI, CountryLT, CountryLU, CountryMG,
+		CountryMW, CountryMY, CountryMV, CountryML, CountryMT, CountryMR, CountryMU,
+		CountryMX, CountryMD, CountryMC, CountryMN, CountryME, CountryMA, CountryMZ,
+		CountryMM, CountryNA, CountryNP, CountryNL, CountryNZ, CountryNI, CountryNE,
+		CountryNG, CountryKP, CountryMK, CountryNO, CountryOM, CountryPK, CountryPA,
+		CountryPG, CountryPY, CountryPE, CountryPH, CountryPL, CountryPT, CountryQA,
+		CountryRO, CountryRU, CountryRW, CountrySA, CountrySN, CountryRS, CountrySG,
+		CountrySK, CountrySI, CountrySO, CountryZA, CountryKR, CountrySS, CountryES,
+		CountryLK, CountrySD, CountrySE, CountryCH, CountrySY, CountryTW, CountryTJ,
+		CountryTZ, CountryTH, CountryTG, CountryTT, CountryTN, CountryTR, CountryTM,
+		CountryUG, CountryUA, CountryAE, CountryGB, CountryUS, CountryUY, CountryUZ,
+		CountryVE, CountryVN, CountryYE, CountryZM, CountryZW:
+		return true
+	default:
+		return false
+	}
+}

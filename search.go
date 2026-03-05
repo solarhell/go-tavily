@@ -66,7 +66,7 @@ type SearchParams struct {
 	IncludeAnswer            *IncludeAnswer     `json:"include_answer,omitzero"`
 	IncludeRawContent        *IncludeRawContent `json:"include_raw_content,omitzero"`
 	IncludeFavicon           *bool              `json:"include_favicon,omitzero"`
-	Country                  string             `json:"country,omitzero"`
+	Country                  *Country           `json:"country,omitzero"`
 	AutoParameters           *bool              `json:"auto_parameters,omitzero"`
 	ExactMatch               *bool              `json:"exact_match,omitzero"`
 	IncludeUsage             *bool              `json:"include_usage,omitzero"`
@@ -100,6 +100,24 @@ type Usage struct {
 
 // Search performs a web search via the Tavily API.
 func (c *Client) Search(ctx context.Context, params *SearchParams) (*SearchResponse, error) {
+	if params.ChunksPerSource != 0 && params.SearchDepth != SearchDepthAdvanced {
+		return nil, fmt.Errorf("search failed: chunks_per_source is only available when search_depth is advanced")
+	}
+	if len(params.IncludeDomains) > 300 {
+		return nil, fmt.Errorf("search failed: include_domains exceeds maximum of 300, got %d", len(params.IncludeDomains))
+	}
+	if len(params.ExcludeDomains) > 150 {
+		return nil, fmt.Errorf("search failed: exclude_domains exceeds maximum of 150, got %d", len(params.ExcludeDomains))
+	}
+	if params.Country != nil {
+		if params.Topic != "" && params.Topic != TopicGeneral {
+			return nil, fmt.Errorf("search failed: country filter is only available when topic is general, got %q", params.Topic)
+		}
+		if !params.Country.IsValid() {
+			return nil, fmt.Errorf("search failed: unsupported country %q", *params.Country)
+		}
+	}
+
 	var resp SearchResponse
 	if err := c.do(ctx, "/search", params, &resp); err != nil {
 		return nil, fmt.Errorf("search failed: %w", err)
