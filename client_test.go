@@ -264,7 +264,13 @@ func TestMissingAPIKey(t *testing.T) {
 }
 
 func TestSearchValidation(t *testing.T) {
-	client := New("tvly-test-key", WithBaseURL("http://unused"))
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		_, _ = w.Write([]byte(`{"query":"","response_time":0,"results":[]}`))
+	}))
+	defer server.Close()
+
+	client := New("tvly-test-key", WithBaseURL(server.URL))
 
 	tests := []struct {
 		name    string
@@ -319,8 +325,8 @@ func TestSearchValidation(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			_, err := client.Search(context.Background(), tt.params)
 			if tt.wantErr == "" {
-				if err != nil && !strings.Contains(err.Error(), "request failed") {
-					t.Fatalf("unexpected validation error: %v", err)
+				if err != nil {
+					t.Fatalf("unexpected error: %v", err)
 				}
 				return
 			}
