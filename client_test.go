@@ -195,8 +195,8 @@ func TestErrorHandling(t *testing.T) {
 		t.Fatal("Expected error, got nil")
 	}
 
-	var apiErr *APIError
-	if !errors.As(err, &apiErr) {
+	apiErr, ok := errors.AsType[*APIError](err)
+	if !ok {
 		t.Fatalf("Expected *APIError, got %T", err)
 	}
 	if !apiErr.IsUnauthorized() {
@@ -215,8 +215,8 @@ func TestMissingAPIKey(t *testing.T) {
 		t.Fatal("Expected error, got nil")
 	}
 
-	var apiErr *APIError
-	if !errors.As(err, &apiErr) {
+	apiErr, ok := errors.AsType[*APIError](err)
+	if !ok {
 		t.Fatalf("Expected *APIError, got %T", err)
 	}
 	if !apiErr.IsUnauthorized() {
